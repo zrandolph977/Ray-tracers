@@ -9,6 +9,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "Vect.h"
+#include "Ray.h"
+#include "Camera.h"
+
 using namespace std;
 
 struct RGBType{
@@ -78,6 +82,10 @@ int main(int argc, char *argv[]) {
     int dpi = 72;
     int n = width*height;
     RGBType *pixels = new RGBType[n];
+
+    Vect X (1,0,0);
+    Vect Y (0,1,0);
+    Vect Z (0,0,1);
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {

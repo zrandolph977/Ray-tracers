@@ -31,3 +31,5 @@
 *.out
 *.app
 .vscode/settings.json
+main.dSYM/Contents/Info.plist
+main.dSYM/Contents/Resources/DWARF/main
