@@ -87,7 +87,8 @@ int main(int argc, char *argv[]) {
     Vect Y (0,1,0);
     Vect Z (0,0,1);
 
-    
+    Vect look_at (0,0,0);
+    Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
