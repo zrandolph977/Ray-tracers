@@ -34,3 +34,4 @@
 main.dSYM/Contents/Info.plist
 main.dSYM/Contents/Resources/DWARF/main
 main
+.vscode/tasks.json
