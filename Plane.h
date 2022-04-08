@@ -5,6 +5,7 @@
 #include "Color.h"
 #include "math.h"
 #include "Object.h"
+#include "Ray.h"
 
 class Plane : public Object{
     Vect normal;
@@ -21,6 +22,22 @@ class Plane : public Object{
     Vect getPlaneNormal() { return normal;}
     double getPlaneDistance() {return distance;}
     Color getPlaneColor() {return color;}
+
+    Vect getNormalAt (Vect point) {
+        return normal;
+    }
+
+    double findIntersection(Ray ray) {
+        Vect ray_direction = ray.getRayDirection();
+        double a = ray_direction.dotProduct(normal);
+        if(a == 0){
+            //Parallel Ray
+            return -1;
+        } else {
+            double b = normal.dotProduct(ray.getRayOrigin().vectAdd(normal.vectMult(distance).negative()));
+            return -1*b/a;
+        }
+    }
 
 };
 

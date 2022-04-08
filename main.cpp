@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
 
     Color white_light (1.0,1.0,1.0,0);
     Color green(0.5,1.0,0.5,0.3);
+    Color maroon(0.5,0.25,0.25,0);
     Color gray(0.5,0.5,0.5,0);
     Color black(0,0,0,0);
 
@@ -112,6 +113,7 @@ int main(int argc, char *argv[]) {
     Light scence_light (light_position, white_light);
 
     Sphere scene_sphere(O, 1, green);
+    Plane scence_plane(Y, -1, maroon);
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
