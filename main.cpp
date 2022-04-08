@@ -9,11 +9,14 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "Object.h"
 #include "Vect.h"
 #include "Ray.h"
 #include "Camera.h"
 #include "Color.h"
 #include "Light.h"
+#include "Sphere.h"
+#include "Plane.h"
 
 using namespace std;
 
@@ -85,6 +88,7 @@ int main(int argc, char *argv[]) {
     int n = width*height;
     RGBType *pixels = new RGBType[n];
 
+    Vect O (0,0,0);
     Vect X (1,0,0);
     Vect Y (0,1,0);
     Vect Z (0,0,1);
@@ -92,7 +96,7 @@ int main(int argc, char *argv[]) {
     Vect campos (3, 1.5, -4);
 
     Vect look_at (0,0,0);
-    Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectY());
+    Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
 
     Vect camdir = diff_btw.negative().normalize();
     Vect camright = Y.crossProduct(camdir).normalize();
@@ -106,6 +110,8 @@ int main(int argc, char *argv[]) {
 
     Vect light_position(-7,10,-10);
     Light scence_light (light_position, white_light);
+
+    Sphere scene_sphere(O, 1, green);
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
