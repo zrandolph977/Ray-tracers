@@ -27,7 +27,7 @@ class Plane : public Object{
         return normal;
     }
 
-    double findIntersection(Ray ray) {
+    virtual double findIntersection(Ray ray) {
         Vect ray_direction = ray.getRayDirection();
         double a = ray_direction.dotProduct(normal);
         if(a == 0){

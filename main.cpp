@@ -34,8 +34,10 @@ void savebmp(const char *filename, int w, int h, int dpi, RGBType *data){
     double factor = 39.375;
     int m = static_cast<int>(factor);
     int ppm = dpi*m;
+
     unsigned char bmpfileheader[14] =  {'B','M', 0,0,0,0,0,0,0,0,54,0,0,0};
     unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,24,0};
+
     bmpfileheader[ 2] = (unsigned char)(filesize);
     bmpfileheader[ 3] = (unsigned char)(filesize>>8);
     bmpfileheader[ 4] = (unsigned char)(filesize>>16);
@@ -78,6 +80,37 @@ void savebmp(const char *filename, int w, int h, int dpi, RGBType *data){
     fclose(f);
 }
 
+int winningObjectIndex(vector<double> object_intersections) {
+    int index_of_minimum_value;
+    if(object_intersections.size() == 0) {
+        return -1;
+    } else if(object_intersections.size() == 1) {
+        if(object_intersections.at(0) > 0) {
+            return 0;
+        } else {
+            return -1;
+        }
+    } else {
+        double max = 0;
+        for (int i = 0; i < object_intersections.size(); i++) {
+            if(max < object_intersections.at(i)) {
+                max = object_intersections.at(i);
+            }
+        }
+        if(max > 0) {
+            for(int index = 0; index < object_intersections.size(); index++) {
+                if(object_intersections.at(index) > 0 && object_intersections.at(index) <= max) {
+                    max = object_intersections.at(index);
+                    index_of_minimum_value = index;
+                }
+            }
+            return index_of_minimum_value;
+        } else {
+            return -1;
+        }
+    }
+}
+
 int thisone;
 
 int main(int argc, char *argv[]) {
@@ -86,6 +119,7 @@ int main(int argc, char *argv[]) {
     int height = 480;
     int dpi = 72;
     int n = width*height;
+    double aspectRatio = (double)width/(double)height;
     RGBType *pixels = new RGBType[n];
 
     Vect O (0,0,0);
@@ -110,14 +144,45 @@ int main(int argc, char *argv[]) {
     Color black(0,0,0,0);
 
     Vect light_position(-7,10,-10);
-    Light scence_light (light_position, white_light);
+    Light scene_light (light_position, white_light);
 
     Sphere scene_sphere(O, 1, green);
-    Plane scence_plane(Y, -1, maroon);
+    Plane scene_plane(Y, -1, maroon);
+    vector<Object*> scene_objects;
+    scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
+    scene_objects.push_back(dynamic_cast<Object*>(&scene_plane));
+
+    double xamnt, yamnt;
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
             thisone = y*width + x;
+            if(width > height) {
+                xamnt = ((x+0.5)/width)*aspectRatio - (((width -height)/(double)height)/2);
+                yamnt = ((height - y) + 0.5)/height;
+            } 
+            else if(height > width) {
+                xamnt = (x + 0.5)/width;
+                yamnt = (((height - y) + 0.5)/height)/aspectRatio - (((height - width)/(double)width)/2);               
+            } else {
+                xamnt = (x + 0.5)/width;
+                yamnt = ((height - y) + 0.5)/height;
+            }
+
+            Vect cam_ray_origin = scene_cam.getCameraPosition();
+            Vect cam_ray_direction = camdir.vectAdd(camright.vectMult(xamnt - 0.5).vectAdd(camdown.vectMult(yamnt - 0.5))).normalize();
+
+            Ray cam_ray(cam_ray_origin, cam_ray_direction);
+
+            vector<double> intersections;
+
+            for (int index = 0; index < scene_objects.size(); index++){
+                intersections.push_back(scene_objects.at(index)->findIntersection(cam_ray));
+            }
+
+            int index_of_winning_object = winningObjectIndex(intersections);
+            cout << index_of_winning_object;
+
             if((x > 200 && x < 440) && (y > 200 && y < 280)) {
                 pixels[thisone].r = 23;
                 pixels[thisone].g = 222;
