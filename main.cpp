@@ -158,7 +158,7 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction,vec
             }
         }
     }
-    return final_color;
+    return final_color.clip();
 }
 
 int thisPixel;
