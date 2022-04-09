@@ -12,7 +12,7 @@ class Object {
     Object();
 
     //methods
-    Color getObjectColor() {return Color(0.0,0.0,0.0,0);}
+    virtual Color getColor() {return Color(0.0,0.0,0.0,0);}
 
     virtual double findIntersection(Ray ray) {
         return 0;

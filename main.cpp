@@ -111,7 +111,7 @@ int winningObjectIndex(vector<double> object_intersections) {
     }
 }
 
-int thisone;
+int thisPixel;
 
 int main(int argc, char *argv[]) {
     cout <<"Rendering" << endl;
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
-            thisone = y*width + x;
+            thisPixel = y*width + x;
             if(width > height) {
                 xamnt = ((x+0.5)/width)*aspectRatio - (((width -height)/(double)height)/2);
                 yamnt = ((height - y) + 0.5)/height;
@@ -181,16 +181,16 @@ int main(int argc, char *argv[]) {
             }
 
             int index_of_winning_object = winningObjectIndex(intersections);
-            cout << index_of_winning_object;
 
-            if((x > 200 && x < 440) && (y > 200 && y < 280)) {
-                pixels[thisone].r = 23;
-                pixels[thisone].g = 222;
-                pixels[thisone].b = 10;
+            if(index_of_winning_object == -1) {
+                pixels[thisPixel].r = 0;
+                pixels[thisPixel].g = 0;
+                pixels[thisPixel].b = 0;
             } else {
-                pixels[thisone].r = 0;
-                pixels[thisone].g = 0;
-                pixels[thisone].b = 0;
+                Color this_color = scene_objects.at(index_of_winning_object)->getColor();
+                pixels[thisPixel].r = this_color.getColorRed();
+                pixels[thisPixel].g = this_color.getColorGreen();
+                pixels[thisPixel].b = this_color.getColorBlue();
             }
         }
     }

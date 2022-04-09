@@ -20,7 +20,7 @@ class Sphere : public Object{
     //methods
     Vect getSphereCenter() { return center;}
     double getSphereRadius() {return radius;}
-    Color getSphereColor() {return color;}
+    virtual Color getColor() {return color;}
 
     Vect getNormalAt(Vect point) {
         Vect normal_Vect = point.vectAdd(center.negative()).normalize();

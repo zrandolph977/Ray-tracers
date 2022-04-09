@@ -21,7 +21,7 @@ class Plane : public Object{
     //methods
     Vect getPlaneNormal() { return normal;}
     double getPlaneDistance() {return distance;}
-    Color getPlaneColor() {return color;}
+    virtual Color getColor() {return color;}
 
     Vect getNormalAt (Vect point) {
         return normal;
