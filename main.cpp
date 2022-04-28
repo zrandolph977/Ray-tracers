@@ -18,6 +18,7 @@
 #include "Light.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Triangle.h"
 
 using namespace std;
 
@@ -178,8 +179,8 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction,vec
                     if(secondary_intersections.at(c) <+ distance_to_light_magnitude) {
                         shadowed = true;
                     }
+                    break;
                 }  
-                break;
             }
             if(shadowed == false) {
                 final_color = final_color.colorAdd(winning_object_color.colorMultiply(light_sources.at(light_index)->getLightColor().colorScalar(cosine_angle)));
@@ -203,6 +204,38 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction,vec
     return final_color.clip();
 }
 
+vector<Object*> scene_objects;
+
+void makeCube (Vect corner1, Vect corner2, Color color) {
+    double c1x = corner1.getVectX();
+    double c1y = corner1.getVectY();
+    double c1z = corner1.getVectZ();
+    double c2x = corner2.getVectX();
+    double c2y = corner2.getVectY();
+    double c2z = corner2.getVectZ();
+
+    Vect A (c2x, c1y, c1z);
+    Vect B (c2x, c1y, c2z);
+    Vect C (c1x, c1y, c2z);
+
+    Vect D (c2x, c2y, c1z);
+    Vect E (c1x, c2y, c1z);
+    Vect F (c1x, c2y, c2z);
+
+    scene_objects.push_back(new Triangle (D, A, corner1, color));
+    scene_objects.push_back(new Triangle (corner1, E, D, color));
+    scene_objects.push_back(new Triangle (corner2, B, A, color));
+    scene_objects.push_back(new Triangle (A, D, corner2, color));
+    scene_objects.push_back(new Triangle (F, C, B, color));
+    scene_objects.push_back(new Triangle (B, corner2, F, color));
+    scene_objects.push_back(new Triangle (E, corner1, C, color));
+    scene_objects.push_back(new Triangle (C, F, E, color));
+    scene_objects.push_back(new Triangle (D, E, F, color));
+    scene_objects.push_back(new Triangle (F, corner2, D, color));
+    scene_objects.push_back(new Triangle (corner1, A, B, color));
+    scene_objects.push_back(new Triangle (B, C, corner1, color));
+}
+
 int thisPixel;
 
 int main(int argc, char *argv[]) {
@@ -217,7 +250,7 @@ int main(int argc, char *argv[]) {
     int n = width*height;
     RGBType *pixels = new RGBType[n];
 
-    int aadepth = 5;
+    int aadepth = 2;
     double aathreshold = 0.1;
     double aspectRatio = (double)width/(double)height;
     double ambientLight = 0.2;
@@ -229,6 +262,7 @@ int main(int argc, char *argv[]) {
     Vect Z (0,0,1);
 
     Vect new_sphere_location(2,0,0);
+    Vect location(-2, 0, 0);
 
     Vect campos (3, 1.5, -4);
 
@@ -241,24 +275,28 @@ int main(int argc, char *argv[]) {
     Camera scene_cam (campos, camdir, camright, camdown);
 
     Color white_light (1.0,1.0,1.0,0);
-    Color green(0.5,1.0,0.5,0.3);
-    Color maroon(0.5,0.25,0.25,0.5);
+    Color green(0.5,1.0,0.5,0.1);
+    Color maroon(0.5,0.25,0.25,0.2);
     Color gray(0.5,0.5,0.5,0);
+    Color cyan(0,1,1,0);
     Color black(0,0,0,0);
     Color tiles(1,1,1,2);
+
+    Sphere scene_sphere(location, 1, green);
+    Sphere scene_sphere1(new_sphere_location, 0.5, maroon);
+    Plane scene_plane(Y, -1, tiles);
+    // Triangle scene_triangle (Vect (3, 0, 0), Vect (0, 3, 0), Vect(0, 0, 3), cyan);
+    scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
+    scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere1));
+    scene_objects.push_back(dynamic_cast<Object*>(&scene_plane));
+    // scene_objects.push_back(dynamic_cast<Object*>(&scene_triangle));
+
+    makeCube(Vect (1, 1, 1), Vect(-1, -1, -1), cyan);
 
     Vect light_position(-7,10,-10);
     Light scene_light (light_position, white_light);
     vector<Source*> light_sources;
     light_sources.push_back(dynamic_cast<Source*>(&scene_light));
-
-    Sphere scene_sphere(O, 1, green);
-    Sphere scene_sphere1(new_sphere_location, 0.75, maroon);
-    Plane scene_plane(Y, -1, tiles);
-    vector<Object*> scene_objects;
-    scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
-    scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere1));
-    scene_objects.push_back(dynamic_cast<Object*>(&scene_plane));
 
     int thisPixel, aa_index;
     double xamnt, yamnt;
